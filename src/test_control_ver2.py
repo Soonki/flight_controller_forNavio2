@@ -9,7 +9,7 @@ import navio.rcinput
 import navio.pwm
 import rospy
 import flight_functions as fcn
-#from flight_cont_ver1.msg import Drone
+from flight_cont_ver1.msg import Drone
 from Robot_parameters import Drone_only
 
 
@@ -182,10 +182,16 @@ with navio.pwm.PWM(0) as motor1:
                     t_output0=time.time()
                     PWM=np.array([fcn.thrust2pwm(Thrusts[j]) for j in range(0,4)])
                     #PWM[1]=fcn.map(Throttle,RC_MIN,RC_MAX,1.0/8,2.1/8)
-                    motor1.set_duty_cycle(PWM[0])
-                    motor2.set_duty_cycle(PWM[1])
-                    motor3.set_duty_cycle(PWM[2])
-                    motor4.set_duty_cycle(PWM[3])
+                    if (Throttle<0.1):
+                        motor1.set_duty_cycle(0.11)
+                        motor2.set_duty_cycle(0.11)
+                        motor3.set_duty_cycle(0.11)
+                        motor4.set_duty_cycle(0.11)
+                    else:
+                        motor1.set_duty_cycle(PWM[0])
+                        motor2.set_duty_cycle(PWM[1])
+                        motor3.set_duty_cycle(PWM[2])
+                        motor4.set_duty_cycle(PWM[3])
                     t_output=time.time()-t_output0
                     #===============================================================================
                     #=========================Debug==========================================================

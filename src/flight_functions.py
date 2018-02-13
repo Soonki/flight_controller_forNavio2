@@ -48,11 +48,11 @@ def Jacobian_forprocessvariance(x):
 #------------------------------------------------------------------------------
 
 def get_preEstimation2(x,gyro,Ts,Tri):
-    Q=np.array([[0,Tri[1,1],-Tri[1,0]],[1,Tri[1,0]*Tri[0,2],Tri[1,1]*Tri[0,2]]])
+    Q=np.array([[0,Tri[1,0],-Tri[1,1]],[1,Tri[1,1]*Tri[0,2],Tri[1,0]*Tri[0,2]]])
     return x+np.dot(Q,gyro)*Ts
 
 def get_preVariance2(x,gyro,P,b,q,Ts,Tri):
-    A=np.array([[1,-(Tri[1,0]*gyro[1]+Tri[1,1]*gyro[2])*Ts],[(Tri[1,1]/Tri[0,1]/Tri[0,1]*gyro[1]-Tri[1,0]/Tri[0,1]/Tri[0,1]*gyro[2])*Ts,1+(Tri[1,1]*Tri[0,2]*gyro[1]-Tri[1,0]*Tri[0,2]*gyro[2])*Ts]])
+    A=np.array([[1,-(Tri[1,1]*gyro[1]+Tri[1,0]*gyro[2])*Ts],[(Tri[1,0]/Tri[0,0]/Tri[0,0]*gyro[1]-Tri[1,1]/Tri[0,0]/Tri[0,0]*gyro[2])*Ts,1+(Tri[1,0]*Tri[0,2]*gyro[1]-Tri[1,1]*Tri[0,2]*gyro[2])*Ts]])
     return np.dot(A,np.dot(P,A.transpose()))+q
 
 def Kalman_filer2(x,y,gyro,c,b,q,r,P,Ts,Tri):
@@ -62,7 +62,7 @@ def Kalman_filer2(x,y,gyro,c,b,q,r,P,Ts,Tri):
     return x_+np.dot(g,y-np.dot(c,x_)),get_Variance(g,c,P_)
 
 def Jacobian_forprocessvariance2(Tri):
-    return np.array([[0,Tri[1,1],-Tri[1,0]],[1,Tri[1,0]*Tri[0,2],Tri[1,1]*Tri[0,2]]])
+    return np.array([[0,Tri[1,0],-Tri[1,1]],[1,Tri[1,1]*Tri[0,2],Tri[1,0]*Tri[0,2]]])
 
 #===============================================================================================
 
