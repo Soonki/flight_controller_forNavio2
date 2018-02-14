@@ -5,7 +5,7 @@ class Drone_only():
     def __init__(self):
         self.M=0.612#[kg]
         self.L=0.29#[m]
-        self.Lfh=0.189-0.0985
+        self.Lfh=0.0905
         self.Lrh=0.0985
         self.Lfv=0.1135
         self.Lrv=0.1055

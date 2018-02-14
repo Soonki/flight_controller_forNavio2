@@ -82,11 +82,11 @@ a0=(Ixx-Iyy)/Izz
 a1=(Izz-Ixx)/Iyy
 a2=(Iyy-Izz)/Ixx
 
-C10=4
+C10=6
 C11=4
-C12=6
-C20=10
-C21=6
+C12=4
+C20=3
+C21=10
 C22=10
 ram0=0.01
 ram1=0.01
