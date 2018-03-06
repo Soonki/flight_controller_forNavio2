@@ -16,6 +16,8 @@ from Robot_parameters import Drone_only
 Robot=Drone_only()
 IMU = navio.mpu9250.MPU9250()
 
+DISARMED=1
+
 #=================================Initial setup==============================================
 #-------------ROS-----------------------
 FRQ=250.0
@@ -33,7 +35,7 @@ Roll_Max=25*np.pi/180
 Yaw_Max=90*np.pi/180
 RC_MIN=1104
 RC_MAX=1924
-Throtle_Max=Robot.M*3*9.81
+Throtle_Max=Robot.M*2*9.81
 #---------------------------------------
 #--------------IMU---------------------
 IMU.initialize(1,0x06)#lowpass->20Hz
@@ -82,12 +84,12 @@ a0=(Ixx-Iyy)/Izz
 a1=(Izz-Ixx)/Iyy
 a2=(Iyy-Izz)/Ixx
 
-C10=6
-C11=4
-C12=4
-C20=3
-C21=10
-C22=10
+C10=600
+C11=12
+C12=12
+C20=15
+C21=3
+C22=3
 ram0=0.01
 ram1=0.01
 ram2=0.01
@@ -101,6 +103,10 @@ K22=C12+C22
 K30=ram0*C20
 K31=ram1*C21
 K32=ram2*C22
+
+IMAX=0.1
+IMIN=-0.1
+
 Mixing=Robot.Mixing
 #-------------------------------------
 #----------Output---------------------
@@ -136,7 +142,7 @@ with navio.pwm.PWM(0) as motor1:
                     t_RC=time.time()
                     ref=np.array([float(rcin.read(0)),float(rcin.read(1)),float(rcin.read(3))])
                     Throttle=int(rcin.read(2))
-                    ref[0]=fcn.map(ref[0],RC_MIN,RC_MAX,-Yaw_Max,Yaw_Max)
+                    ref[0]=0#fcn.map(ref[0],RC_MIN,RC_MAX,-Yaw_Max,Yaw_Max)
                     ref[1]=fcn.map(ref[1],RC_MIN,RC_MAX,-Roll_Max,Roll_Max)
                     ref[2]=fcn.map(ref[2],RC_MIN,RC_MAX,-Pitch_Max,Pitch_Max)
                     Throttle=fcn.map(Throttle,RC_MIN,RC_MAX,0,Throtle_Max)
@@ -168,6 +174,10 @@ with navio.pwm.PWM(0) as motor1:
                     #=========================Controller============================================
                     t_cont0=time.time()
                     p=p+phi*Ts
+                    fcn.suturation(p[0],IMAX,IMIN)
+                    fcn.suturation(p[1],IMAX,IMIN)
+                    fcn.suturation(p[2],IMAX,IMIN)
+
                     phi_dot=np.array([Tri[1,1]/Tri[0,0]*m6g[1]+Tri[1,0]/Tri[0,0]*m6g[2],\
                                       Tri[1,0]*m6g[1]-Tri[1,1]*m6g[2],\
                                       m6g[0]+Tri[1,1]*Tri[0,2]*m6g[1]+Tri[1,0]*Tri[0,2]*m6g[2]])
@@ -182,7 +192,7 @@ with navio.pwm.PWM(0) as motor1:
                     t_output0=time.time()
                     PWM=np.array([fcn.thrust2pwm(Thrusts[j]) for j in range(0,4)])
                     #PWM[1]=fcn.map(Throttle,RC_MIN,RC_MAX,1.0/8,2.1/8)
-                    if (Throttle<0.1):
+                    if (Throttle<0.1 or DISARMED==0):
                         motor1.set_duty_cycle(0.11)
                         motor2.set_duty_cycle(0.11)
                         motor3.set_duty_cycle(0.11)

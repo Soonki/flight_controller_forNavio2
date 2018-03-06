@@ -14,7 +14,7 @@ class Drone_only():
         self.Izz=0.004265
         self.C=10
         self.Mixing=np.array([[      1,     1,      1,     1],\
-                              [-self.C,self.C,-self.C,self.C],\
+                              [self.C,-self.C,self.C,-self.C],\
                               [self.Lfh,self.Lfh,-self.Lrh,-self.Lrh],\
                               [self.Lfv,-self.Lfv,-self.Lrv,self.Lrv]])
         self.Mixing=np.linalg.inv(self.Mixing)

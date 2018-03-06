@@ -67,6 +67,12 @@ def Jacobian_forprocessvariance2(Tri):
 #===============================================================================================
 
 #======================================Other Functions==========================================
+def suturation(value,Max,Min):
+    if value>Max:
+        value=Max
+    elif value<Min:
+        value=Min
+
 def map(x,x_min,x_max,Min,Max):
     return (Max-Min)/(x_max-x_min)*(x-x_min)+Min
 
